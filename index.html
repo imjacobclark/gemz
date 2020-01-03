@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <title>gemz</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
+    <script src="https://pixijs.io/pixi-sound/dist/pixi-sound.js"></script>
 
     <style>
         body {
@@ -21,11 +22,16 @@
 
 <body>
     <script type="module">
+        const sound = PIXI.sound.Sound.from('assets/music.mp3');
+        sound.play();
+
+        let score = 0;
+
         import Background from './src/Background.js';
         import Floor from './src/Floor.js';
         import Player from './src/Player.js';
         import Controls from './src/Controls.js';
-
+        
         const gemz = new PIXI.Application({
             width: window.innerWidth,
             height: window.innerHeight,
@@ -54,6 +60,7 @@
 
         const bushTexture = PIXI.Texture.from('./assets/bush.png');
         const treeTexture = PIXI.Texture.from('./assets/tree.png');
+        const gemTexture = PIXI.Texture.from('./assets/gem.png');
 
         const objects = []
 
@@ -71,7 +78,7 @@
                 multiplier: 0,
                 growBy: 0.4
             })
-        }, 600);
+        }, 1000);
 
         window.setInterval(function () {
             let sprite = new PIXI.Sprite(treeTexture);
@@ -89,13 +96,51 @@
             })
         }, 2000);
 
+        for(let i = 0; i <= 10; i++){
+            window.setTimeout(function () {
+                let sprite = new PIXI.Sprite(gemTexture);
+                sprite.zIndex = 2
+                objects.push({
+                    x: window.innerWidth / 2 - 50,
+                    y: -200,
+                    height: 1,
+                    width: 1,
+                    sprite: sprite,
+                    direction: Math.floor(Math.random() * 2) + 1,
+                    xMovement: Math.floor(Math.random() * 3700) + 500,
+                    multiplier: 0,
+                    growBy: 0.3,
+                    type: 'collect'
+                })
+            }, Math.floor(Math.random() * 50000) + 1);
+        }
+        
+
         const ticker = gemz.ticker;
         
+        let playing = false;
         ticker.add(delta => {
             objects.some((object, i) => {
                 if(player.containsPoint(new PIXI.Point(object.x, object.y)) || object.sprite.containsPoint(new PIXI.Point(player.player.x, player.player.y))) {
-                    player.player.visible = false
-                    ticker.stop()
+                    if(object.type === 'collect'){
+                        object.sprite.visible = false;
+
+                        if(playing === false){
+                            playing = true
+                            PIXI.sound.Sound.from({
+                                url: 'assets/gem.mp3',
+                                autoPlay: true,
+                                complete: () => {
+                                    playing = false;
+                                }
+                            }).play()
+                        }
+
+                        return;
+                    }else {
+                        player.player.visible = false
+                        ticker.stop()
+                    }
                 }
 
                 object.sprite.x = object.x
