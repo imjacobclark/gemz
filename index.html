@@ -81,7 +81,7 @@
                 direction: Math.floor(Math.random() * 2) + 1,
                 xMovement: Math.floor(Math.random() * 3700) + 500,
                 multiplier: 0,
-                growBy: 0.2
+                growBy: window.innerWidth < 500 ? 0.2 : 0.4
             })
         }, 1000);
 
@@ -97,7 +97,7 @@
                 direction: Math.floor(Math.random() * 2) + 1,
                 xMovement: Math.floor(Math.random() * 3700) + 500,
                 multiplier: 0,
-                growBy: 0.5
+                growBy: window.innerWidth < 500 ? 0.5 : 1
             })
         }, 2000);
 
