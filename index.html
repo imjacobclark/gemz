@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Coin Collector!</title>
+    <title>gemz</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
+
     <style>
         body {
             margin: 0;
@@ -20,6 +21,11 @@
 
 <body>
     <script type="module">
+        import Background from './src/Background.js';
+        import Floor from './src/Floor.js';
+        import Player from './src/Player.js';
+        import Controls from './src/Controls.js';
+
         const gemz = new PIXI.Application({
             width: window.innerWidth,
             height: window.innerHeight,
@@ -38,45 +44,16 @@
 
         document.body.appendChild(gemz.view);
 
-        const polyPoints = [
-                (window.innerWidth / 2), -50, // top left
-                (window.innerWidth / 2), -50, // top right
-                window.innerWidth, window.innerHeight, // bottom right
-                0, window.innerHeight // bottom left
-            ];
+        const floor = new Floor(new PIXI.Graphics());
+        const player = new Player(window.innerWidth / 2, window.innerHeight - 200, 100, 100);
+        const background = new Background();
+        const controls = new Controls(player, floor);
 
-        const floor = new PIXI.Graphics()
-                .beginFill(0x22a6d7, 0.4)
-                .drawPolygon(polyPoints)
-                .lineStyle(100, 0xFF0000);
-
-        floor.sortableChildren = true
-
-        const backgroundTexture = PIXI.Texture.from('./assets/back.png');
-        const background = new PIXI.Sprite(backgroundTexture);
-        background.width = window.innerWidth;
-        background.height = window.innerHeight;
+        floor.draw();
+        controls.listen();
 
         const bushTexture = PIXI.Texture.from('./assets/bush.png');
         const treeTexture = PIXI.Texture.from('./assets/tree.png');
-        const playerTexture = PIXI.Texture.from('./assets/player.png');
-
-        const player = new PIXI.Sprite(playerTexture);
-        player.width = 100;
-        player.height = 100;
-        player.x = window.innerWidth / 2;
-        player.y = window.innerHeight - 200;
-        player.zIndex = 1
-
-        document.addEventListener('keydown', e => {
-            if (e.keyCode === 39 || e.keyCode === 68) {
-                player.x = player.x + 30;
-            }
-
-            if (e.keyCode === 37 || e.keyCode === 65 || e.keyCode === 81) {
-                player.x = player.x - 30;
-            }
-        })
 
         const objects = []
 
@@ -84,7 +61,7 @@
             let sprite = new PIXI.Sprite(bushTexture);
             sprite.zIndex = 1
             objects.push({
-                x: (window.innerWidth / 2 + 40) - (Math.floor(Math.random() * 90) + 1),
+                x: window.innerWidth / 2,
                 y: 0,
                 height: 5,
                 width: 5,
@@ -100,7 +77,7 @@
             let sprite = new PIXI.Sprite(treeTexture);
             sprite.zIndex = 2
             objects.push({
-                x: window.innerWidth / 2 - 100,
+                x: window.innerWidth / 2 - 50,
                 y: -200,
                 height: 10,
                 width: 10,
@@ -108,7 +85,7 @@
                 direction: Math.floor(Math.random() * 2) + 1,
                 xMovement: Math.floor(Math.random() * 3700) + 500,
                 multiplier: 0,
-                growBy: 2
+                growBy: 1
             })
         }, 2000);
 
@@ -116,8 +93,8 @@
         
         ticker.add(delta => {
             objects.some((object, i) => {
-                if(player.containsPoint(new PIXI.Point(object.x, object.y)) || object.sprite.containsPoint(new PIXI.Point(player.x, player.y))) {
-                    player.visible = false
+                if(player.containsPoint(new PIXI.Point(object.x, object.y)) || object.sprite.containsPoint(new PIXI.Point(player.player.x, player.player.y))) {
+                    player.player.visible = false
                     ticker.stop()
                 }
 
@@ -125,7 +102,7 @@
                 object.sprite.y = object.y
                 object.sprite.width = object.width
                 object.sprite.height = object.height
-                floor.addChild(object.sprite);
+                floor.graphics.addChild(object.sprite);
 
                 object.y = object.y + 4 * object.multiplier;
 
@@ -140,14 +117,16 @@
                 object.multiplier = object.multiplier + 0.01
 
                 if(window.innerHeight < object.y) {
+                    object.visible = false;
                     objects.splice(i, 1)
                 }
             })
         });
 
-        gemz.stage.addChild(background);
-        gemz.stage.addChild(floor);
-        gemz.stage.addChild(player);
+
+        gemz.stage.addChild(background.background);
+        gemz.stage.addChild(floor.graphics);
+        gemz.stage.addChild(player.player);
     </script>
 </body>
 
