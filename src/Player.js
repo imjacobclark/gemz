@@ -2,7 +2,7 @@ const MOVEMENT_INCREMENT = 30;
 
 export default class Player {
     constructor(x, y, width, height) {
-        const texture = PIXI.Texture.from('../assets/player.png');
+        const texture = PIXI.Texture.from('./assets/player.png');
         this._player = new PIXI.Sprite(texture);
 
         this._player.width = width;
