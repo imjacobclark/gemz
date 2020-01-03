@@ -116,7 +116,7 @@
         
         ticker.add(delta => {
             objects.some((object, i) => {
-                if(player.containsPoint(new PIXI.Point(object.x - 20, object.y - 20)) || object.sprite.containsPoint(new PIXI.Point(player.x - 20, player.y - 20))) {
+                if(player.containsPoint(new PIXI.Point(object.x, object.y)) || object.sprite.containsPoint(new PIXI.Point(player.x, player.y))) {
                     player.visible = false
                     ticker.stop()
                 }
