@@ -22,8 +22,8 @@
 
 <body>
     <script type="module">
-        const sound = PIXI.sound.Sound.from('assets/music.mp3');
-        sound.play();
+        const backgroundMusic = PIXI.sound.Sound.from('assets/music.mp3');
+        backgroundMusic.play();
 
         let score = 0;
 
@@ -31,6 +31,8 @@
         import Floor from './src/Floor.js';
         import Player from './src/Player.js';
         import Controls from './src/Controls.js';
+        import GemSound from './src/GemSound.js';
+        import BushSound from './src/BushSound.js';
         
         const gemz = new PIXI.Application({
             width: window.innerWidth,
@@ -54,6 +56,8 @@
         const player = new Player(window.innerWidth / 2, window.innerHeight - 200, 100, 100);
         const background = new Background();
         const controls = new Controls(player, floor);
+        const gemSound = new GemSound();
+        const bushSound = new BushSound();
 
         floor.draw();
         controls.listen();
@@ -110,36 +114,78 @@
                     xMovement: Math.floor(Math.random() * 3700) + 500,
                     multiplier: 0,
                     growBy: 0.3,
-                    type: 'collect'
+                    type: 'collect',
+                    collected: false
                 })
             }, Math.floor(Math.random() * 50000) + 1);
         }
         
 
         const ticker = gemz.ticker;
-        
-        let playing = false;
+
+        const style = new PIXI.TextStyle({
+                fontFamily: 'Arial',
+                fontSize: 14,
+                fontStyle: 'italic',
+                fontWeight: 'bold',
+                fill: ['#d675da', '#ab3dab'], // gradient
+                stroke: '#FFFFFF',
+                strokeThickness: 5,
+                dropShadow: true,
+                dropShadowColor: '#000000',
+                dropShadowBlur: 4,
+                dropShadowAngle: Math.PI / 6,
+                dropShadowDistance: 6,
+                wordWrap: true,
+                wordWrapWidth: 440,
+            });
+
+            const richText = new PIXI.Text('Score: ' + score + '\nMove with a and d keys, collect the gems!\nJacob Clark 2020', style);
+            richText.x = 10;
+            richText.y = window.innerHeight - 80;
+
         ticker.add(delta => {
             objects.some((object, i) => {
                 if(player.containsPoint(new PIXI.Point(object.x, object.y)) || object.sprite.containsPoint(new PIXI.Point(player.player.x, player.player.y))) {
                     if(object.type === 'collect'){
-                        object.sprite.visible = false;
+                        if(!object.collected){
+                            console.log('here')
+                            object.sprite.visible = false;
+                            object.collected = true;
+                            gemSound.play();
+                            score = score + 10;
 
-                        if(playing === false){
-                            playing = true
-                            PIXI.sound.Sound.from({
-                                url: 'assets/gem.mp3',
-                                autoPlay: true,
-                                complete: () => {
-                                    playing = false;
-                                }
-                            }).play()
+                            return;
                         }
+                    } else {
+                        player.player.visible = false;
+                        const lostTextStyle = new PIXI.TextStyle({
+                            fontFamily: 'Arial',
+                            fontSize: 36,
+                            fontStyle: 'italic',
+                            fontWeight: 'bold',
+                            fill: ['#d675da', '#ab3dab'], // gradient
+                            stroke: '#FFFFFF',
+                            strokeThickness: 5,
+                            dropShadow: true,
+                            dropShadowColor: '#000000',
+                            dropShadowBlur: 4,
+                            dropShadowAngle: Math.PI / 6,
+                            dropShadowDistance: 6,
+                            wordWrap: true,
+                            wordWrapWidth: 440,
+                            align: 'center'
+                        });
 
-                        return;
-                    }else {
-                        player.player.visible = false
-                        ticker.stop()
+                        const lostText = new PIXI.Text('You lost!\n\nFinal score: ' + score + '/100', lostTextStyle);
+                        lostText.x = window.innerWidth / 2 - 100;
+                        lostText.y = window.innerHeight / 2;
+
+                        gemz.stage.addChild(lostText);
+                        bushSound.play();
+                        backgroundMusic.stop()
+                        ticker.stop();
+
                     }
                 }
 
@@ -165,9 +211,15 @@
                     object.visible = false;
                     objects.splice(i, 1)
                 }
-            })
-        });
+            });
 
+            if(score === 100){
+                alert("You won!");
+            }
+
+            richText.text = 'Score: ' + score + '/100 \nMove with a and d keys, collect the gems!\nJacob Clark 2020';
+            gemz.stage.addChild(richText);
+        });
 
         gemz.stage.addChild(background.background);
         gemz.stage.addChild(floor.graphics);
