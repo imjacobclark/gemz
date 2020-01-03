@@ -5,6 +5,11 @@ export default class Controls {
     }
 
     listen(){
+        var hammertime = new Hammer(window, {});
+        hammertime.on('swipeleft', function (ev) {
+            alert("swipe left")
+        });
+
         document.addEventListener('keydown', e => {
             if (e.keyCode === 39 || e.keyCode === 68) {
                 const isMoveOutOfBounds = this.floor.pointsOutOfBounds(this.player.nextRightMoveX(), this.player.player.y);
