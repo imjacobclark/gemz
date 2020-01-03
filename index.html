@@ -54,7 +54,7 @@
         document.body.appendChild(gemz.view);
 
         const floor = new Floor(new PIXI.Graphics());
-        const player = new Player(window.innerWidth / 2, window.innerHeight - 200, 100, 100);
+        const player = new Player(window.innerWidth / 2, window.innerHeight - 200, window.innerWidth < 600 ? 50 : 100, window.innerWidth < 600 ? 50 : 100);
         const background = new Background();
         const controls = new Controls(player, floor);
         const gemSound = new GemSound();
@@ -81,7 +81,7 @@
                 direction: Math.floor(Math.random() * 2) + 1,
                 xMovement: Math.floor(Math.random() * 3700) + 500,
                 multiplier: 0,
-                growBy: window.innerWidth < 500 ? 0.2 : 0.4
+                growBy: window.innerWidth < 600 ? 0.2 : 0.4
             })
         }, 1000);
 
@@ -97,7 +97,7 @@
                 direction: Math.floor(Math.random() * 2) + 1,
                 xMovement: Math.floor(Math.random() * 3700) + 500,
                 multiplier: 0,
-                growBy: window.innerWidth < 500 ? 0.5 : 1
+                growBy: window.innerWidth < 600 ? 0.5 : 1
             })
         }, 2000);
 
@@ -150,7 +150,6 @@
                 if(player.containsPoint(new PIXI.Point(object.x, object.y)) || object.sprite.containsPoint(new PIXI.Point(player.player.x, player.player.y))) {
                     if(object.type === 'collect'){
                         if(!object.collected){
-                            console.log('here')
                             object.sprite.visible = false;
                             object.collected = true;
                             gemSound.play();
