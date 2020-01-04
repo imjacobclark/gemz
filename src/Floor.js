@@ -4,10 +4,10 @@ export default class Floor {
         this._polygon = null
 
         this.topLeftPointX = (window.innerWidth / 2);
-        this.topLeftPointY = -50;
+        this.topLeftPointY = 0;
 
         this.topRightPointX = (window.innerWidth / 2);
-        this.topRightPointY = -50;
+        this.topRightPointY = 0;
 
         this.bottomRightPointX = window.innerWidth;
         this.bottomRightPointY = window.innerHeight;

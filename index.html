@@ -54,7 +54,7 @@
         document.body.appendChild(gemz.view);
 
         const floor = new Floor(new PIXI.Graphics());
-        const player = new Player(window.innerWidth / 2, window.innerHeight - 200, window.innerWidth < 600 ? 50 : 100, window.innerWidth < 600 ? 50 : 100);
+        const player = new Player(window.innerWidth / 2, window.innerHeight - 150, window.innerWidth < 600 ? 50 : 100, window.innerWidth < 600 ? 50 : 100);
         const background = new Background();
         const controls = new Controls(player, floor);
         const gemSound = new GemSound();
@@ -65,6 +65,9 @@
 
         const bushTexture = PIXI.Texture.from('./assets/bush.png');
         const treeTexture = PIXI.Texture.from('./assets/tree.png');
+
+
+
         const gemTexture = PIXI.Texture.from('./assets/gem.png');
 
         const objects = []
@@ -79,11 +82,12 @@
                 width: 5,
                 sprite: sprite,
                 direction: Math.floor(Math.random() * 2) + 1,
-                xMovement: Math.floor(Math.random() * 3700) + 500,
+                xMovementRight: Math.floor(Math.random() * 2500) + 400,
+                xMovementLeft: Math.floor(Math.random() * 2500) + 350,
                 multiplier: 0,
                 growBy: window.innerWidth < 600 ? 0.2 : 0.4
             })
-        }, 1000);
+        }, 300);
 
         window.setInterval(function () {
             let sprite = new PIXI.Sprite(treeTexture);
@@ -91,28 +95,30 @@
             objects.push({
                 x: window.innerWidth / 2 - 30,
                 y: 0,
-                height: 50,
-                width: 50,
+                height: 70,
+                width: 70,
                 sprite: sprite,
                 direction: Math.floor(Math.random() * 2) + 1,
-                xMovement: Math.floor(Math.random() * 3700) + 500,
+                xMovementRight: Math.floor(Math.random() * 2500) + 400,
+                xMovementLeft: Math.floor(Math.random() * 2500) + 350,
                 multiplier: 0,
                 growBy: window.innerWidth < 600 ? 0.2 : 0.4
             })
-        }, 2000);
+        }, Math.floor(Math.random() * 6000) + 2000);
 
         for(let i = 0; i <= 100; i++){
             window.setTimeout(function () {
                 let sprite = new PIXI.Sprite(gemTexture);
                 sprite.zIndex = 2
                 objects.push({
-                    x: window.innerWidth / 2 - 30,
+                    x: window.innerWidth / 2,
                     y: 0,
                     height: 1,
                     width: 1,
                     sprite: sprite,
                     direction: Math.floor(Math.random() * 2) + 1,
-                    xMovement: Math.floor(Math.random() * 3700) + 500,
+                    xMovementRight: Math.floor(Math.random() * 2500) + 400,
+                    xMovementLeft: Math.floor(Math.random() * 2500) + 350,
                     multiplier: 0,
                     growBy: window.innerWidth < 600 ? 0.2 : 0.3,
                     type: 'collect',
@@ -158,6 +164,7 @@
                         }
                     } else {
                         document.addEventListener('click', () => window.location.reload());
+                        document.addEventListener('touchstart', () => window.location.reload());
 
                         player.player.visible = false;
                         const lostTextStyle = new PIXI.TextStyle({
@@ -195,12 +202,12 @@
                 object.sprite.height = object.height
                 floor.graphics.addChild(object.sprite);
 
-                object.y = object.y + 4 * object.multiplier;
+                object.y = object.y + 5 * object.multiplier;
 
                 if(object.direction === 1){
-                    object.x = object.x + (window.innerWidth / object.xMovement)  * object.multiplier
+                    object.x = object.x + (window.innerWidth / object.xMovementRight)  * object.multiplier
                 }else{
-                    object.x = object.x - (window.innerWidth / object.xMovement)  * object.multiplier
+                    object.x = object.x - (window.innerWidth / object.xMovementLeft)  * object.multiplier
                 }
 
                 object.height = object.height + object.growBy;
@@ -212,7 +219,7 @@
                     objects.splice(i, 1)
                 }
             });
-
+            
             richText.text = 'Score: ' + score + '\nMove with a and d keys, collect the gems!\nJacob Clark 2020';
             gemz.stage.addChild(richText);
         });
