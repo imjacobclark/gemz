@@ -89,39 +89,38 @@
             let sprite = new PIXI.Sprite(treeTexture);
             sprite.zIndex = 2
             objects.push({
-                x: window.innerWidth / 2 - 50,
-                y: -200,
-                height: 10,
-                width: 10,
+                x: window.innerWidth / 2 - 30,
+                y: 0,
+                height: 50,
+                width: 50,
                 sprite: sprite,
                 direction: Math.floor(Math.random() * 2) + 1,
                 xMovement: Math.floor(Math.random() * 3700) + 500,
                 multiplier: 0,
-                growBy: window.innerWidth < 600 ? 0.5 : 1
+                growBy: window.innerWidth < 600 ? 0.2 : 0.4
             })
         }, 2000);
 
-        for(let i = 0; i <= 10; i++){
+        for(let i = 0; i <= 100; i++){
             window.setTimeout(function () {
                 let sprite = new PIXI.Sprite(gemTexture);
                 sprite.zIndex = 2
                 objects.push({
-                    x: window.innerWidth / 2 - 50,
-                    y: -200,
+                    x: window.innerWidth / 2 - 30,
+                    y: 0,
                     height: 1,
                     width: 1,
                     sprite: sprite,
                     direction: Math.floor(Math.random() * 2) + 1,
                     xMovement: Math.floor(Math.random() * 3700) + 500,
                     multiplier: 0,
-                    growBy: 0.3,
+                    growBy: window.innerWidth < 600 ? 0.2 : 0.3,
                     type: 'collect',
                     collected: false
                 })
-            }, Math.floor(Math.random() * 50000) + 1);
+            }, Math.floor(Math.random() * 50000) + 1000 * i);
         }
         
-
         const ticker = gemz.ticker;
 
         const style = new PIXI.TextStyle({
@@ -158,6 +157,8 @@
                             return;
                         }
                     } else {
+                        document.addEventListener('click', () => window.location.reload());
+
                         player.player.visible = false;
                         const lostTextStyle = new PIXI.TextStyle({
                             fontFamily: 'Arial',
@@ -177,15 +178,14 @@
                             align: 'center'
                         });
 
-                        const lostText = new PIXI.Text('You lost!\n\nFinal score: ' + score + '/100', lostTextStyle);
-                        lostText.x = window.innerWidth / 2 - 150;
-                        lostText.y = window.innerHeight / 2 - 100;
+                        const lostText = new PIXI.Text('You lost!\n\nFinal score: ' + score + '\n Hit anywhere to replay', lostTextStyle);
+                        lostText.x = window.innerWidth / 2 - 200;
+                        lostText.y = window.innerHeight / 2 - 150;
 
                         gemz.stage.addChild(lostText);
                         bushSound.play();
                         backgroundMusic.stop()
                         ticker.stop();
-
                     }
                 }
 
@@ -213,11 +213,7 @@
                 }
             });
 
-            if(score === 100){
-                alert("You won!");
-            }
-
-            richText.text = 'Score: ' + score + '/100 \nMove with a and d keys, collect the gems!\nJacob Clark 2020';
+            richText.text = 'Score: ' + score + '\nMove with a and d keys, collect the gems!\nJacob Clark 2020';
             gemz.stage.addChild(richText);
         });
 

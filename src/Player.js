@@ -1,4 +1,4 @@
-const MOVEMENT_INCREMENT = 30;
+const MOVEMENT_INCREMENT = 40;
 
 export default class Player {
     constructor(x, y, width, height) {
